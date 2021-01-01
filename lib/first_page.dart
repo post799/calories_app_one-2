@@ -345,6 +345,8 @@ class _FirstPageState extends State<FirstPage> {
                     prefs.setString('weightNumber', getWeight);
                     getHeight = heightController.text;
                     prefs.setString('heightNumber', getHeight);
+                    prefs.setString('myResult', result);
+
                     Navigator.push(
                         context,
                         MaterialPageRoute(

@@ -33,17 +33,20 @@ class _MainPageState extends State<MainPage> {
   double resultCalories;
   String totalCalories;
   int newCalories2;
-  int finalNumber = 0;
-  String caloriesAte = '0';
+  int finalNumber;
+  String caloriesAte;
+  String defaultString = '0';
+  int newAteCalories = 0;
 
   _MainPageState(this.value);
 
   restoreMain() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      value = value ?? (prefs.getString('myValue'));
-      newValue = value ?? (prefs.getString('newValue'));
+      value = (prefs.getString('myValue')) ?? (prefs.getString('myResult'));
+      newValue = (prefs.getString('newValue')) ?? value;
       weightLoss = 2;
+      caloriesAte = (prefs.getString('caloriesAte')) ?? defaultString;
     });
   }
 
@@ -330,26 +333,36 @@ class _MainPageState extends State<MainPage> {
                         ('ADD'),
                         style: TextStyle(color: Colors.white),
                       ),
-                      onPressed: () {
-                        if (_formStateKey.currentState.validate()) {
-                          _formStateKey.currentState.save();
-                          dbHelper.add(Person(null, _personName, _personPhone));
+                      onPressed: () async {
+                        SharedPreferences prefs =
+                            await SharedPreferences.getInstance();
+                        setState(() {
+                          if (_formStateKey.currentState.validate()) {
+                            _formStateKey.currentState.save();
+                            dbHelper
+                                .add(Person(null, _personName, _personPhone));
 
-                          newCalories = double.parse(_personPhone);
-                          oldCalories = double.parse(newValue);
-                          resultCalories = oldCalories - newCalories;
-                          totalCalories = resultCalories.toStringAsFixed(0);
-                          newValue = totalCalories;
-                          value = totalCalories;
+                            newCalories = double.parse(_personPhone);
+                            oldCalories = double.parse(newValue);
+                            resultCalories = oldCalories - newCalories;
+                            totalCalories = resultCalories.toStringAsFixed(0);
+                            newValue = totalCalories;
+                            value = totalCalories;
 
-                          newCalories2 = newCalories.toInt();
-                          finalNumber = newCalories2 + finalNumber;
-                          caloriesAte = finalNumber.toString();
-                        }
+                            newAteCalories = int.parse(caloriesAte);
 
-                        _personNameController.text = '';
-                        _personPhoneController.text = '';
-                        refreshpersonList();
+                            newCalories2 = newCalories.toInt();
+                            finalNumber = newCalories2 + newAteCalories;
+                            caloriesAte = finalNumber.toString();
+                            prefs.setString('caloriesAte', caloriesAte);
+                            prefs.setString('myValue', value);
+                            prefs.setString('newValue', newValue);
+                          }
+
+                          _personNameController.text = '';
+                          _personPhoneController.text = '';
+                          refreshpersonList();
+                        });
                       },
                     ),
                     RaisedButton(
