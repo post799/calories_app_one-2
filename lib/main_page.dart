@@ -22,9 +22,11 @@ class _MainPageState extends State<MainPage> {
   int weightLoss = 3;
 
   String value;
+  String mainValue;
   String newValue;
-  double newNumber;
   double resultNumber;
+  double resultNumber2;
+  double resultNumber3;
   String fast;
   String medium;
   String maintain;
@@ -32,21 +34,25 @@ class _MainPageState extends State<MainPage> {
   double oldCalories;
   double resultCalories;
   String totalCalories;
-  int newCalories2;
-  int finalNumber;
-  String caloriesAte;
-  String defaultString = '0';
-  int newAteCalories = 0;
 
-  _MainPageState(this.value);
+  double caloriesAte = 0;
+  String consumedCaloriesText = '0';
+
+  _MainPageState(
+    this.value,
+  );
 
   restoreMain() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      value = (prefs.getString('myValue')) ?? (prefs.getString('myResult'));
-      newValue = (prefs.getString('newValue')) ?? value;
-      weightLoss = 2;
-      caloriesAte = (prefs.getString('caloriesAte')) ?? defaultString;
+      mainValue = value;
+      newValue = mainValue;
+      weightLoss = (prefs.getInt('loseWeight')) ?? 2;
+
+      // value = (prefs.getString('myValue')) ?? (prefs.getString('myResult'));
+      // newValue = (prefs.getString('newValue')) ?? value;
+      ;
+      // caloriesAte = (prefs.getString('caloriesAte')) ?? defaultString;
     });
   }
 
@@ -188,7 +194,7 @@ class _MainPageState extends State<MainPage> {
               Column(
                 children: [
                   Text(
-                    '$caloriesAte',
+                    '$consumedCaloriesText',
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 40),
                   ),
                   Text(
@@ -229,32 +235,45 @@ class _MainPageState extends State<MainPage> {
                       await SharedPreferences.getInstance();
                   setState(() {
                     if (index == 0) {
-                      weightLoss = 0;
-                      newNumber = double.parse(value);
-                      resultNumber = newNumber * 0.6;
+                      weightLoss = index;
+                      resultNumber =
+                          ((double.parse(mainValue) * 0.6) - caloriesAte);
                       fast = resultNumber.toStringAsFixed(0);
                       newValue = fast;
-                      prefs.setString('myValue', value);
-                      prefs.setString('newValue', newValue);
-                      prefs.setInt('loseWeight', weightLoss);
+
+                      // resultNumber = (newNumber * 0.6) - finalNumber;
+
+                      // prefs.setString('fast', fast);
+                      // prefs.setString('myValue', value);
+                      // prefs.setString('newValue', newValue);
+                      // prefs.setInt('loseWeight', weightLoss);
                     } else if (index == 1) {
-                      weightLoss = 1;
-                      newNumber = double.parse(value);
-                      resultNumber = newNumber * 0.8;
+                      weightLoss = index;
+                      resultNumber =
+                          ((double.parse(mainValue) * 0.8) - caloriesAte);
                       medium = resultNumber.toStringAsFixed(0);
                       newValue = medium;
-                      prefs.setString('myValue', value);
-                      prefs.setString('newValue', newValue);
-                      prefs.setInt('loseWeight', weightLoss);
+                      // resultNumber = (newNumber * 0.8) - finalNumber;
+                      // medium = resultNumber.toStringAsFixed(0);
+                      // newValue = medium;
+                      // prefs.setString('medium', medium);
+                      // prefs.setString('myValue', value);
+                      // prefs.setString('newValue', newValue);
+                      // prefs.setInt('loseWeight', weightLoss);
                     } else if (index == 2) {
-                      weightLoss = 2;
-                      newNumber = double.parse(value);
-                      resultNumber = newNumber * 1;
+                      weightLoss = index;
+                      resultNumber =
+                          ((double.parse(mainValue) * 1) - caloriesAte);
                       maintain = resultNumber.toStringAsFixed(0);
                       newValue = maintain;
-                      prefs.setString('myValue', value);
-                      prefs.setString('newValue', newValue);
-                      prefs.setInt('loseWeight', weightLoss);
+                      // newNumber = double.parse(value);
+                      // resultNumber = newNumber - finalNumber;
+                      // maintain = resultNumber.toStringAsFixed(0);
+                      // newValue = maintain;
+                      // prefs.setString('maintain', maintain);
+                      // prefs.setString('myValue', value);
+                      // prefs.setString('newValue', newValue);
+                      // prefs.setInt('loseWeight', weightLoss);
                     }
                   });
                 },
@@ -342,21 +361,28 @@ class _MainPageState extends State<MainPage> {
                             dbHelper
                                 .add(Person(null, _personName, _personPhone));
 
+                            //Calculating calories after new food entry
                             newCalories = double.parse(_personPhone);
                             oldCalories = double.parse(newValue);
                             resultCalories = oldCalories - newCalories;
                             totalCalories = resultCalories.toStringAsFixed(0);
                             newValue = totalCalories;
-                            value = totalCalories;
 
-                            newAteCalories = int.parse(caloriesAte);
+                            //Calculating calories ate
 
-                            newCalories2 = newCalories.toInt();
-                            finalNumber = newCalories2 + newAteCalories;
-                            caloriesAte = finalNumber.toString();
-                            prefs.setString('caloriesAte', caloriesAte);
-                            prefs.setString('myValue', value);
-                            prefs.setString('newValue', newValue);
+                            caloriesAte = newCalories + caloriesAte;
+                            consumedCaloriesText =
+                                caloriesAte.toStringAsFixed(0);
+
+                            // newAteCalories = int.parse(caloriesAte);
+                            // newCalories2 = newCalories.toInt();
+                            // finalNumber = newCalories2 + newAteCalories;
+                            // caloriesAte = finalNumber.toString();
+
+                            //saving everything in shared prefs
+                            // prefs.setString('caloriesAte', caloriesAte);
+                            // prefs.setString('myValue', value);
+                            // prefs.setString('newValue', newValue);
                           }
 
                           _personNameController.text = '';
