@@ -19,7 +19,7 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   int dayOfWeek = 5;
-  int weightLoss = 3;
+  int weightLoss;
 
   String value;
   String mainValue;
@@ -47,7 +47,7 @@ class _MainPageState extends State<MainPage> {
   restoreMain() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      // weightLoss = (prefs.getInt('loseWeight')) ?? 2;
+      weightLoss = (prefs.getInt('loseWeight')) ?? 2;
       // value = (prefs.getString('myValue')) ?? value;
 
       mainValue = (prefs.getString('mainValue')) ?? value;
@@ -55,8 +55,6 @@ class _MainPageState extends State<MainPage> {
       newValue = newValue2 ?? mainValue;
       consumedCaloriesText = (prefs.getString('consumedCaloriesText')) ?? '0';
       caloriesAte = (prefs.getDouble('caloriesAte')) ?? 0;
-      print('newValue:$newValue ');
-      print('mainValue: $mainValue');
     });
   }
 
@@ -240,43 +238,36 @@ class _MainPageState extends State<MainPage> {
                   setState(() {
                     tabNumber = double.parse(mainValue);
                     if (index == 0) {
-                      weightLoss = index;
+                      weightLoss = 0;
                       resultNumber = ((tabNumber * 0.6) - caloriesAte);
                       fast = resultNumber.toStringAsFixed(0);
                       newValue = fast;
-                      //
-                      // prefs.setString('fast', fast);
                       prefs.setString(
                           'consumedCaloriesText', consumedCaloriesText);
                       prefs.setString('newValue', newValue);
-                      // prefs.setInt('loseWeight', weightLoss);
-                      // prefs.setString('myValue', value);
-                      // prefs.setString('mainValue', mainValue);
+                      prefs.setInt('loseWeight', weightLoss);
+                      prefs.setString('mainValue', mainValue);
                     } else if (index == 1) {
-                      weightLoss = index;
+                      weightLoss = 1;
                       resultNumber = ((tabNumber * 0.8) - caloriesAte);
                       medium = resultNumber.toStringAsFixed(0);
                       newValue = medium;
-                      //
-                      // prefs.setString('medium', medium);
-                      // prefs.setString('myValue', value);
+
                       prefs.setString(
                           'consumedCaloriesText', consumedCaloriesText);
                       prefs.setString('newValue', newValue);
-                      // prefs.setInt('loseWeight', weightLoss);
-                      // prefs.setString('mainValue', mainValue);
+                      prefs.setInt('loseWeight', weightLoss);
+                      prefs.setString('mainValue', mainValue);
                     } else if (index == 2) {
-                      weightLoss = index;
+                      weightLoss = 2;
                       resultNumber = ((tabNumber * 1) - caloriesAte);
-
                       maintain = resultNumber.toStringAsFixed(0);
                       newValue = maintain;
-                      //
-                      // prefs.setString('maintain', maintain);
-                      // prefs.setString('myValue', value);
-
-                      // prefs.setInt('loseWeight', weightLoss);
-                      // prefs.setString('mainValue', mainValue);
+                      prefs.setString(
+                          'consumedCaloriesText', consumedCaloriesText);
+                      prefs.setString('newValue', newValue);
+                      prefs.setInt('loseWeight', weightLoss);
+                      prefs.setString('mainValue', mainValue);
                     }
                   });
                 },
@@ -385,11 +376,7 @@ class _MainPageState extends State<MainPage> {
                             prefs.setString('mainValue', mainValue);
                             prefs.setString('newValue', newValue);
                             // prefs.setString('myValue', value);
-                            print('mainValue: $mainValue');
-                            print('newValue: $newValue');
-                            print('caloriesAte: $caloriesAte');
-                            print(
-                                'consumedCaloriesText: $consumedCaloriesText');
+
                           }
 
                           _personNameController.text = '';
