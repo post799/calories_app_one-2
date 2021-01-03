@@ -25,16 +25,18 @@ class _MainPageState extends State<MainPage> {
   String mainValue;
   String newValue;
   double resultNumber;
-  double resultNumber2;
-  double resultNumber3;
+  // double resultNumber2;
+  // double resultNumber3;
   String fast;
   String medium;
   String maintain;
   double newCalories;
   double oldCalories;
   double resultCalories;
+  double tabNumber;
   String totalCalories;
-
+  String newValue2;
+  //
   double caloriesAte = 0;
   String consumedCaloriesText = '0';
 
@@ -45,14 +47,16 @@ class _MainPageState extends State<MainPage> {
   restoreMain() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      mainValue = value;
-      newValue = mainValue;
-      weightLoss = (prefs.getInt('loseWeight')) ?? 2;
+      // weightLoss = (prefs.getInt('loseWeight')) ?? 2;
+      // value = (prefs.getString('myValue')) ?? value;
 
-      // value = (prefs.getString('myValue')) ?? (prefs.getString('myResult'));
-      // newValue = (prefs.getString('newValue')) ?? value;
-      ;
-      // caloriesAte = (prefs.getString('caloriesAte')) ?? defaultString;
+      mainValue = (prefs.getString('mainValue')) ?? value;
+      newValue2 = (prefs.getString('newValue'));
+      newValue = newValue2 ?? mainValue;
+      consumedCaloriesText = (prefs.getString('consumedCaloriesText')) ?? '0';
+      caloriesAte = (prefs.getDouble('caloriesAte')) ?? 0;
+      print('newValue:$newValue ');
+      print('mainValue: $mainValue');
     });
   }
 
@@ -120,8 +124,8 @@ class _MainPageState extends State<MainPage> {
                 initialLabelIndex: dayOfWeek,
                 cornerRadius: 10.0,
                 activeFgColor: Colors.white,
-                inactiveBgColor: Colors.grey,
-                inactiveFgColor: Colors.white,
+                inactiveBgColor: Color(0xff444c91),
+                inactiveFgColor: Color(0xffe6e7f0),
                 labels: [
                   'M',
                   'T',
@@ -217,8 +221,8 @@ class _MainPageState extends State<MainPage> {
                 initialLabelIndex: weightLoss,
                 cornerRadius: 10.0,
                 activeFgColor: Colors.white,
-                inactiveBgColor: Colors.grey,
-                inactiveFgColor: Colors.white,
+                inactiveBgColor: Color(0xff444c91),
+                inactiveFgColor: Color(0xffe6e7f0),
                 labels: [
                   ' Lose It\n  Fast',
                   ' Lose\nWeight',
@@ -234,46 +238,45 @@ class _MainPageState extends State<MainPage> {
                   SharedPreferences prefs =
                       await SharedPreferences.getInstance();
                   setState(() {
+                    tabNumber = double.parse(mainValue);
                     if (index == 0) {
                       weightLoss = index;
-                      resultNumber =
-                          ((double.parse(mainValue) * 0.6) - caloriesAte);
+                      resultNumber = ((tabNumber * 0.6) - caloriesAte);
                       fast = resultNumber.toStringAsFixed(0);
                       newValue = fast;
-
-                      // resultNumber = (newNumber * 0.6) - finalNumber;
-
+                      //
                       // prefs.setString('fast', fast);
-                      // prefs.setString('myValue', value);
-                      // prefs.setString('newValue', newValue);
+                      prefs.setString(
+                          'consumedCaloriesText', consumedCaloriesText);
+                      prefs.setString('newValue', newValue);
                       // prefs.setInt('loseWeight', weightLoss);
+                      // prefs.setString('myValue', value);
+                      // prefs.setString('mainValue', mainValue);
                     } else if (index == 1) {
                       weightLoss = index;
-                      resultNumber =
-                          ((double.parse(mainValue) * 0.8) - caloriesAte);
+                      resultNumber = ((tabNumber * 0.8) - caloriesAte);
                       medium = resultNumber.toStringAsFixed(0);
                       newValue = medium;
-                      // resultNumber = (newNumber * 0.8) - finalNumber;
-                      // medium = resultNumber.toStringAsFixed(0);
-                      // newValue = medium;
+                      //
                       // prefs.setString('medium', medium);
                       // prefs.setString('myValue', value);
-                      // prefs.setString('newValue', newValue);
+                      prefs.setString(
+                          'consumedCaloriesText', consumedCaloriesText);
+                      prefs.setString('newValue', newValue);
                       // prefs.setInt('loseWeight', weightLoss);
+                      // prefs.setString('mainValue', mainValue);
                     } else if (index == 2) {
                       weightLoss = index;
-                      resultNumber =
-                          ((double.parse(mainValue) * 1) - caloriesAte);
+                      resultNumber = ((tabNumber * 1) - caloriesAte);
+
                       maintain = resultNumber.toStringAsFixed(0);
                       newValue = maintain;
-                      // newNumber = double.parse(value);
-                      // resultNumber = newNumber - finalNumber;
-                      // maintain = resultNumber.toStringAsFixed(0);
-                      // newValue = maintain;
+                      //
                       // prefs.setString('maintain', maintain);
                       // prefs.setString('myValue', value);
-                      // prefs.setString('newValue', newValue);
+
                       // prefs.setInt('loseWeight', weightLoss);
+                      // prefs.setString('mainValue', mainValue);
                     }
                   });
                 },
@@ -347,7 +350,7 @@ class _MainPageState extends State<MainPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     RaisedButton(
-                      color: Colors.blue,
+                      color: Colors.indigo[900],
                       child: Text(
                         ('ADD'),
                         style: TextStyle(color: Colors.white),
@@ -361,28 +364,32 @@ class _MainPageState extends State<MainPage> {
                             dbHelper
                                 .add(Person(null, _personName, _personPhone));
 
-                            //Calculating calories after new food entry
+                            // //Calculating calories after new food entry
                             newCalories = double.parse(_personPhone);
                             oldCalories = double.parse(newValue);
                             resultCalories = oldCalories - newCalories;
                             totalCalories = resultCalories.toStringAsFixed(0);
                             newValue = totalCalories;
-
-                            //Calculating calories ate
-
+                            //
+                            // //Calculating calories ate
+                            //
                             caloriesAte = newCalories + caloriesAte;
+
                             consumedCaloriesText =
                                 caloriesAte.toStringAsFixed(0);
-
-                            // newAteCalories = int.parse(caloriesAte);
-                            // newCalories2 = newCalories.toInt();
-                            // finalNumber = newCalories2 + newAteCalories;
-                            // caloriesAte = finalNumber.toString();
-
-                            //saving everything in shared prefs
-                            // prefs.setString('caloriesAte', caloriesAte);
+                            //
+                            // //saving everything in shared prefs
+                            prefs.setDouble('caloriesAte', caloriesAte);
+                            prefs.setString(
+                                'consumedCaloriesText', consumedCaloriesText);
+                            prefs.setString('mainValue', mainValue);
+                            prefs.setString('newValue', newValue);
                             // prefs.setString('myValue', value);
-                            // prefs.setString('newValue', newValue);
+                            print('mainValue: $mainValue');
+                            print('newValue: $newValue');
+                            print('caloriesAte: $caloriesAte');
+                            print(
+                                'consumedCaloriesText: $consumedCaloriesText');
                           }
 
                           _personNameController.text = '';
@@ -392,7 +399,7 @@ class _MainPageState extends State<MainPage> {
                       },
                     ),
                     RaisedButton(
-                      color: Colors.blue,
+                      color: Colors.indigo[900],
                       child: Text(
                         ('CLEAR'),
                         style: TextStyle(color: Colors.white),
