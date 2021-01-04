@@ -33,10 +33,20 @@ class _MainPageState extends State<MainPage> {
   double newCalories;
   double oldCalories;
   double resultCalories;
+  double resultCalories2;
   double tabNumber;
   String totalCalories;
   String newValue2;
+  double newValue3;
+  double afterDelete;
+
+  String deletedCaloriesString;
+  double deletedCaloriesDouble;
+  double newCaloriesTotalAfterDeletedItem;
+  double newCaloriesAte;
+  double caloriesAte2;
   //
+  String personPhone;
   double caloriesAte = 0;
   String consumedCaloriesText = '0';
 
@@ -361,10 +371,11 @@ class _MainPageState extends State<MainPage> {
                             resultCalories = oldCalories - newCalories;
                             totalCalories = resultCalories.toStringAsFixed(0);
                             newValue = totalCalories;
-                            //
+
                             // //Calculating calories ate
-                            //
+
                             caloriesAte = newCalories + caloriesAte;
+                            newCaloriesAte = caloriesAte;
 
                             consumedCaloriesText =
                                 caloriesAte.toStringAsFixed(0);
@@ -474,9 +485,36 @@ class _MainPageState extends State<MainPage> {
                     DataCell(
                       IconButton(
                         icon: Icon(Icons.delete),
-                        onPressed: () {
-                          dbHelper.delete(person.id);
-                          refreshpersonList();
+                        onPressed: () async {
+                          SharedPreferences prefs =
+                              await SharedPreferences.getInstance();
+                          setState(() {
+                            dbHelper.delete(person.id);
+                            caloriesAte2 =
+                                newCaloriesAte - double.parse(person.phone);
+                            newCaloriesAte = caloriesAte2;
+                            caloriesAte = caloriesAte2;
+                            consumedCaloriesText =
+                                caloriesAte.toStringAsFixed(0);
+
+                            oldCalories = double.parse(newValue);
+                            print('oldCalories: $oldCalories');
+                            resultCalories =
+                                oldCalories + double.parse(person.phone);
+                            print('resultCalories: $resultCalories');
+                            totalCalories = resultCalories.toStringAsFixed(0);
+                            print('totalCalories: $totalCalories');
+                            newValue = totalCalories;
+                            print('newValue: $newValue');
+
+                            refreshpersonList();
+                            prefs.setString('mainValue', mainValue);
+                            prefs.setString('newValue', newValue);
+
+                            prefs.setDouble('caloriesAte', caloriesAte);
+                            prefs.setString(
+                                'consumedCaloriesText', consumedCaloriesText);
+                          });
                         },
                       ),
                     )

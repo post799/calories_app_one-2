@@ -6,6 +6,7 @@ import 'package:path_provider/path_provider.dart'
     show getApplicationDocumentsDirectory;
 
 class DBHelper {
+  String calDeleted;
   static Database _db;
   Future<Database> get db async {
     if (_db != null) {
@@ -33,6 +34,7 @@ class DBHelper {
   Future<Person> add(Person person) async {
     var dbClient = await db;
     person.id = await dbClient.insert('person', person.toMap());
+
     return person;
   }
 
@@ -42,6 +44,7 @@ class DBHelper {
     List<Map> maps =
         await dbClient.query('person', columns: ['id', 'name', 'phone']);
     List<Person> persons = [];
+
     if (maps.length > 0) {
       for (int i = 0; i < maps.length; i++) {
         persons.add(Person.fromMap(maps[i]));
@@ -63,6 +66,7 @@ class DBHelper {
 //Update person details
   Future<int> update(Person person) async {
     var dbClient = await db;
+    calDeleted = person.phone;
     return await dbClient.update(
       'person',
       person.toMap(),
