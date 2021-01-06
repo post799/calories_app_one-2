@@ -47,6 +47,7 @@ class _MainPageState extends State<MainPage> {
   double caloriesAte2;
   //
   String personPhone;
+  double personPhone2;
   double caloriesAte = 0;
   String consumedCaloriesText = '0';
 
@@ -65,6 +66,7 @@ class _MainPageState extends State<MainPage> {
       newValue = newValue2 ?? mainValue;
       consumedCaloriesText = (prefs.getString('consumedCaloriesText')) ?? '0';
       caloriesAte = (prefs.getDouble('caloriesAte')) ?? 0;
+      newCaloriesAte = (prefs.getDouble('newCaloriesAte')) ?? 0;
     });
   }
 
@@ -382,6 +384,7 @@ class _MainPageState extends State<MainPage> {
                             //
                             // //saving everything in shared prefs
                             prefs.setDouble('caloriesAte', caloriesAte);
+                            prefs.setDouble('newCaloriesAte', newCaloriesAte);
                             prefs.setString(
                                 'consumedCaloriesText', consumedCaloriesText);
                             prefs.setString('mainValue', mainValue);
@@ -447,7 +450,7 @@ class _MainPageState extends State<MainPage> {
         child: DataTable(
           columns: [
             DataColumn(
-              label: Text('Name'),
+              label: Text('Food Name'),
             ),
             DataColumn(
               label: Text('Calories'),
@@ -498,19 +501,15 @@ class _MainPageState extends State<MainPage> {
                                 caloriesAte.toStringAsFixed(0);
 
                             oldCalories = double.parse(newValue);
-                            print('oldCalories: $oldCalories');
-                            resultCalories =
-                                oldCalories + double.parse(person.phone);
-                            print('resultCalories: $resultCalories');
+                            personPhone2 = double.parse(person.phone);
+                            resultCalories = oldCalories + personPhone2;
                             totalCalories = resultCalories.toStringAsFixed(0);
-                            print('totalCalories: $totalCalories');
                             newValue = totalCalories;
-                            print('newValue: $newValue');
 
                             refreshpersonList();
                             prefs.setString('mainValue', mainValue);
                             prefs.setString('newValue', newValue);
-
+                            prefs.setString('totalCalories', totalCalories);
                             prefs.setDouble('caloriesAte', caloriesAte);
                             prefs.setString(
                                 'consumedCaloriesText', consumedCaloriesText);
