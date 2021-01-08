@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'db_helper.dart';
 import 'person_model.dart';
 import 'main_page.dart';
+import 'db_helper2.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PersonPage extends StatefulWidget {
   @override
@@ -10,7 +11,10 @@ class PersonPage extends StatefulWidget {
 
 class _personPageState extends State<PersonPage> {
   String minusCalories;
-  String foodName2;
+  String minusCalories5;
+  double minusCalories2 = 0;
+  double minusCalories3 = 0;
+  double minusCalories4 = 0;
   final GlobalKey<FormState> _formStateKey = GlobalKey<FormState>();
 
   //Make the initialization
@@ -45,7 +49,7 @@ class _personPageState extends State<PersonPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Save Info App'),
+        title: Text('Go Back To Main Page'),
         actions: <Widget>[],
       ),
       body: Column(
@@ -69,7 +73,7 @@ class _personPageState extends State<PersonPage> {
                                 width: 2,
                                 style: BorderStyle.solid)),
                         // hintText: "Person Name",
-                        labelText: "Food Name",
+                        labelText: "Activity Name",
                         fillColor: Colors.white,
                         labelStyle: TextStyle(
                           color: Colors.blue,
@@ -107,7 +111,9 @@ class _personPageState extends State<PersonPage> {
                         ('ADD'),
                         style: TextStyle(color: Colors.white),
                       ),
-                      onPressed: () {
+                      onPressed: () async {
+                        SharedPreferences prefs =
+                            await SharedPreferences.getInstance();
                         if (_formStateKey.currentState.validate()) {
                           _formStateKey.currentState.save();
                           dbHelper.add(Person(null, _foodName, _foodCalories));
@@ -116,8 +122,19 @@ class _personPageState extends State<PersonPage> {
                         _foodNameController.text = '';
                         _foodCaloriesController.text = '';
                         refreshpersonList();
-                        foodName2 = _foodName;
                         minusCalories = _foodCalories;
+                        // prefs.setDouble('minusCalories2', minusCalories2);
+                        minusCalories3 = double.parse(minusCalories);
+                        minusCalories4 =
+                            (prefs.getDouble('minusCalories4')) ?? 0;
+
+                        minusCalories4 = minusCalories3 + minusCalories4;
+                        prefs.setDouble('minusCalories4', minusCalories4);
+
+                        minusCalories5 = minusCalories4.toStringAsFixed(0);
+                        minusCalories = minusCalories5;
+                        prefs.setString('minusCalories', minusCalories);
+
                         Navigator.pop(context, minusCalories);
                       },
                     ),
@@ -171,7 +188,7 @@ class _personPageState extends State<PersonPage> {
         child: DataTable(
           columns: [
             DataColumn(
-              label: Text('Food Name'),
+              label: Text('Activity Name'),
             ),
             DataColumn(
               label: Text('Calories'),
@@ -185,7 +202,10 @@ class _personPageState extends State<PersonPage> {
                 (person) => DataRow(
                   cells: [
                     DataCell(
-                      Text(person.name),
+                      Text(
+                        person.name,
+                        style: TextStyle(color: Colors.blue),
+                      ),
                       onTap: () {
                         setState(() {
                           personIdForUpdate = person.id;

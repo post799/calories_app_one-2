@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:after_layout/after_layout.dart';
+import 'package:calories_app_one/person_page.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toggle_switch/toggle_switch.dart';
@@ -18,9 +19,26 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
+  gotoSecondPage(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final result = await Navigator.push(
+        context, MaterialPageRoute(builder: (context) => PersonPage()));
+    prefs.setDouble('caloriesAte', caloriesAte);
+    prefs.setDouble('newCaloriesAte', newCaloriesAte);
+    prefs.setString('consumedCaloriesText', consumedCaloriesText);
+    prefs.setString('mainValue', mainValue);
+    prefs.setString('newValue', newValue);
+
+    if (result != null) {
+      setState(() {
+        dataBack = result;
+      });
+    }
+  }
+
   int dayOfWeek = 5;
   int weightLoss;
-
+  String minusCalories = '';
   String value;
   String mainValue;
   String newValue;
@@ -50,6 +68,11 @@ class _MainPageState extends State<MainPage> {
   double personPhone2;
   double caloriesAte = 0;
   String consumedCaloriesText = '0';
+  double fromNV;
+  double fromNV2;
+
+  String dataBack;
+  double fitnessCalories = 0;
 
   _MainPageState(
     this.value,
@@ -58,12 +81,14 @@ class _MainPageState extends State<MainPage> {
   restoreMain() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
+      dataBack = dataBack ?? (prefs.getString('minusCalories')) ?? '0';
       weightLoss = (prefs.getInt('loseWeight')) ?? 2;
       // value = (prefs.getString('myValue')) ?? value;
 
       mainValue = (prefs.getString('mainValue')) ?? value;
       newValue2 = (prefs.getString('newValue'));
       newValue = newValue2 ?? mainValue;
+
       consumedCaloriesText = (prefs.getString('consumedCaloriesText')) ?? '0';
       caloriesAte = (prefs.getDouble('caloriesAte')) ?? 0;
       newCaloriesAte = (prefs.getDouble('newCaloriesAte')) ?? 0;
@@ -184,7 +209,7 @@ class _MainPageState extends State<MainPage> {
               Column(
                 children: [
                   Text(
-                    '0',
+                    '$dataBack',
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 40),
                   ),
                   Text(
@@ -355,7 +380,7 @@ class _MainPageState extends State<MainPage> {
                     RaisedButton(
                       color: Colors.indigo[900],
                       child: Text(
-                        ('ADD'),
+                        ('ADD FOOD'),
                         style: TextStyle(color: Colors.white),
                       ),
                       onPressed: () async {
@@ -370,7 +395,10 @@ class _MainPageState extends State<MainPage> {
                             // //Calculating calories after new food entry
                             newCalories = double.parse(_personPhone);
                             oldCalories = double.parse(newValue);
-                            resultCalories = oldCalories - newCalories;
+                            fitnessCalories = double.parse(dataBack);
+
+                            resultCalories =
+                                (oldCalories - newCalories) + fitnessCalories;
                             totalCalories = resultCalories.toStringAsFixed(0);
                             newValue = totalCalories;
 
@@ -412,6 +440,16 @@ class _MainPageState extends State<MainPage> {
                           isUpdate = false;
                           personIdForUpdate = null;
                         });
+                      },
+                    ),
+                    RaisedButton(
+                      color: Colors.indigo[900],
+                      child: Text(
+                        ('ADD FITNESS'),
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      onPressed: () {
+                        gotoSecondPage(context);
                       },
                     ),
                   ],
